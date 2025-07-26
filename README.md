@@ -1,4 +1,4 @@
-# Automação de Geração de Grade MVC
+# Automação de Geração de Grade de Carregamento
 
 Este projeto automatiza a geração de planilhas filtradas por transportadora (MVC) a partir de um Excel de cargas.
 
