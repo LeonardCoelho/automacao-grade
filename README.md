@@ -14,7 +14,7 @@ Este projeto automatiza a geração de planilhas filtradas por transportadora a 
 
 ## 📁 Tecnologias
 
-- Python 3.x
+- Python
 - openpyxl
 - win32com
 - Power Automate
