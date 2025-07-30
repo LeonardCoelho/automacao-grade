@@ -1,6 +1,6 @@
 # 🚛 Automação de Geração de Grade de Carregamento
 
-Este projeto automatiza a criação de uma planilha filtrada para uma transportadora específica (MVC), baseada em um arquivo Excel de ordens de coleta, com formatação mantida, validações aplicadas e integração com Power Automate.
+Este projeto automatiza a criação de uma planilha filtrada para uma transportadora específica, baseada em um arquivo Excel de ordens de coleta, com formatação mantida, validações aplicadas e integração com Power Automate.
 
 ---
 
