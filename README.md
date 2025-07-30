@@ -10,7 +10,7 @@ Este projeto automatiza a criação de uma planilha filtrada para uma transporta
 - Aguarda até o arquivo ser liberado
 - Identifica o próximo dia útil (pula domingos)
 - Copia a aba referente ao dia
-- Filtra apenas as linhas da transportadora "MVC" com status válido
+- Filtra apenas as linhas da transportadora com status válido
 - Mantém toda a formatação original (fontes, cores, largura de colunas)
 - Salva a nova planilha em uma pasta monitorada
 - O Power Automate detecta e envia o e-mail automaticamente com o anexo
