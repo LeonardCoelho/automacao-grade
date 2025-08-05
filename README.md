@@ -46,7 +46,7 @@ automacao-grade/
 
 ## 📸 Exemplo da planilha gerada
 
-![Print planilha final](images/print-planilha-final.jpg)
+![Print planilha final](images/Print%20planilha%20final.jpg)
 
 ## ▶️ Como Usar
 
