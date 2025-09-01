@@ -25,7 +25,7 @@ automacao-grade/
 ├── images/
 │   └── print-planilha-final.jpg       # Exemplo do resultado
 ├── src/
-│   └── atualizar_grade_MVC.py         # Script principal
+│   └── atualizar_grade.py         # Script principal
 ├── README.md
 └── requirements.txt                   # Bibliotecas necessárias
 ```
@@ -64,7 +64,7 @@ pip install -r requirements.txt
 
 4. Execute o script manualmente ou agende com o Task Scheduler:  
 ```bash
-python src/atualizar_grade_MVC.py
+python src/atualizar_grade.py
 ```
 
 ## 🔄 Integração com Power Automate
