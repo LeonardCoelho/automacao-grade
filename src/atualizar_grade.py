@@ -1,4 +1,3 @@
-import pandas as pd
 from openpyxl import load_workbook, Workbook
 from datetime import datetime, timedelta
 from copy import copy
@@ -8,6 +7,12 @@ import subprocess
 import time
 import win32com.client
 import pythoncom
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TRANSPORTADORA = os.getenv("TRANSPORTADORA")
+STATUS_INVALIDOS = os.getenv("STATUS_INVALIDOS").split(",")
 
 def planilha_esta_aberta(nome_arquivo_excel):
     """Verifica se o Excel tem o arquivo aberto (tratando nomes temporários)."""
@@ -25,7 +30,7 @@ def planilha_esta_aberta(nome_arquivo_excel):
 try:
     print("🚀 Iniciando script...")
 
-    caminho_original = r"C:\Users\leosouza\Arcor\GC_BR_Planejamento_Logístico - Documentos\3. BRA-Roteirizacao\Ordens de Coleta 2025\05 CD CTG\ORDEM DE COLETA CTG.xlsx"
+    caminho_original = r"C:\Users\leosouza\Arcor\GC_BR_Planejamento_Logístico - Documentos\3. BRA-Roteirizacao\Ordens de Coleta 2026\05 CD CTG\ORDEM DE COLETA CTG.xlsx"
     nome_arquivo = os.path.basename(caminho_original)
     print(f"📂 Arquivo: {nome_arquivo}")
 
@@ -46,23 +51,24 @@ try:
     print("✅ Arquivo liberado! Continuando...")
 
     # Define data da aba (pula domingo)
-    hoje = datetime.today()
-    amanha = hoje + timedelta(days=1)
-    if amanha.weekday() == 6:  # Domingo
-        amanha += timedelta(days=1)
-    dia_planilha = str(amanha.day)
-    print(f"🔎 Processando aba: '{dia_planilha}'")
+    def calcular_proximo_dia_util():
+        hoje = datetime.today()
+        amanha = hoje + timedelta(days=1)
+        if amanha.weekday() == 6:  # Domingo
+            amanha += timedelta(days=1)
+        print(f"🔎 Processando aba: '{amanha.day}'")
+        return str(amanha.day)
 
     # Abre a planilha
     wb_data = load_workbook(caminho_original, data_only=True)
-    ws_data = wb_data[dia_planilha]
+    ws_data = wb_data[calcular_proximo_dia_util()]
     wb_formatos = load_workbook(caminho_original, data_only=False)
-    ws_formatos = wb_formatos[dia_planilha]
+    ws_formatos = wb_formatos[calcular_proximo_dia_util()]
 
     # Cria nova planilha
     wb_novo = Workbook()
     ws_novo = wb_novo.active
-    ws_novo.title = dia_planilha
+    ws_novo.title = calcular_proximo_dia_util()
 
     # Copia cabeçalhos da linha 15
     for col_idx, cell in enumerate(ws_data[15], start=1):
@@ -85,7 +91,7 @@ try:
         transp = str(ws_data.cell(row=row_idx, column=col_transp).value).strip().upper()
         email_ok = str(ws_data.cell(row=row_idx, column=col_emailok).value).strip().upper()
 
-        if transp == "MVC" and email_ok not in ["SEPARAR", "FATURAR"]:
+        if transp == TRANSPORTADORA and email_ok not in STATUS_INVALIDOS:
             for col_idx in range(1, ws_data.max_column + 1):
                 val = ws_data.cell(row=row_idx, column=col_idx).value
                 new_cell = ws_novo.cell(row=row_dest, column=col_idx, value=val)
@@ -112,7 +118,7 @@ try:
     # Salva o novo arquivo
     pasta_saida = r"C:\Users\leosouza\OneDrive - Arcor\Documentos\PowerAutomate"
     os.makedirs(pasta_saida, exist_ok=True)
-    nome_saida = f"Grade_MVC_{dia_planilha}.xlsx"
+    nome_saida = f"Grade_MVC_{calcular_proximo_dia_util()}.xlsx"
     caminho_saida = os.path.join(pasta_saida, nome_saida)
     caminho_temp = os.path.join(pasta_saida, f"__temp_{nome_saida}")
 
