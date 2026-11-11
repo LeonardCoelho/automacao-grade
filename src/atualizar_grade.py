@@ -13,6 +13,10 @@ load_dotenv()
 
 TRANSPORTADORA = os.getenv("TRANSPORTADORA")
 STATUS_INVALIDOS = os.getenv("STATUS_INVALIDOS").split(",")
+CAMINHO_ENTRADA = os.getenv("CAMINHO_ENTRADA")
+PASTA_SAIDA = os.getenv("PASTA_SAIDA")
+LINHA_HEADER = int(os.getenv("LINHA_HEADER", "1"))
+PREFIXO_SAIDA = os.getenv("PREFIXO_SAIDA", "Grade")
 
 def planilha_esta_aberta(nome_arquivo_excel):
     """Verifica se o Excel tem o arquivo aberto (tratando nomes temporários)."""
@@ -30,7 +34,7 @@ def planilha_esta_aberta(nome_arquivo_excel):
 try:
     print("🚀 Iniciando script...")
 
-    caminho_original = r"C:\Users\leosouza\Arcor\GC_BR_Planejamento_Logístico - Documentos\3. BRA-Roteirizacao\Ordens de Coleta 2026\05 CD CTG\ORDEM DE COLETA CTG.xlsx"
+    caminho_original = CAMINHO_ENTRADA
     nome_arquivo = os.path.basename(caminho_original)
     print(f"📂 Arquivo: {nome_arquivo}")
 
@@ -70,10 +74,10 @@ try:
     ws_novo = wb_novo.active
     ws_novo.title = calcular_proximo_dia_util()
 
-    # Copia cabeçalhos da linha 15
-    for col_idx, cell in enumerate(ws_data[15], start=1):
+    # Copia cabeçalhos da linha LINHA_HEADER
+    for col_idx, cell in enumerate(ws_data[LINHA_HEADER], start=1):
         new_cell = ws_novo.cell(row=1, column=col_idx, value=cell.value)
-        ref = ws_formatos.cell(row=15, column=col_idx)
+        ref = ws_formatos.cell(row=LINHA_HEADER, column=col_idx)
         new_cell.font = copy(ref.font)
         new_cell.border = copy(ref.border)
         new_cell.fill = copy(ref.fill)
@@ -82,12 +86,12 @@ try:
         new_cell.alignment = copy(ref.alignment)
 
     # Mapeia colunas
-    headers = [str(cell.value).strip().upper() for cell in ws_data[15]]
+    headers = [str(cell.value).strip().upper() for cell in ws_data[LINHA_HEADER]]
     col_transp = headers.index("TRANSP.") + 1
     col_emailok = headers.index("EMAIL OK") + 1
 
     row_dest = 2
-    for row_idx in range(16, ws_data.max_row + 1):
+    for row_idx in range(LINHA_HEADER + 1, ws_data.max_row + 1):
         transp = str(ws_data.cell(row=row_idx, column=col_transp).value).strip().upper()
         email_ok = str(ws_data.cell(row=row_idx, column=col_emailok).value).strip().upper()
 
@@ -109,16 +113,16 @@ try:
         ws_novo.column_dimensions[col_letter].width = dim.width
 
     # Ajuste da altura das linhas
-    for row_idx in range(15, ws_formatos.max_row + 1):
+    for row_idx in range(LINHA_HEADER, ws_formatos.max_row + 1):
         if row_idx in ws_formatos.row_dimensions:
             height = ws_formatos.row_dimensions[row_idx].height
             if height:
-                ws_novo.row_dimensions[row_idx - 14].height = height
+                ws_novo.row_dimensions[row_idx - LINHA_HEADER + 1].height = height
 
     # Salva o novo arquivo
-    pasta_saida = r"C:\Users\leosouza\OneDrive - Arcor\Documentos\PowerAutomate"
+    pasta_saida = PASTA_SAIDA
     os.makedirs(pasta_saida, exist_ok=True)
-    nome_saida = f"Grade_MVC_{calcular_proximo_dia_util()}.xlsx"
+    nome_saida = f"{PREFIXO_SAIDA}_{calcular_proximo_dia_util()}.xlsx"
     caminho_saida = os.path.join(pasta_saida, nome_saida)
     caminho_temp = os.path.join(pasta_saida, f"__temp_{nome_saida}")
 
@@ -128,8 +132,8 @@ try:
     print(f"✅ Arquivo final salvo com sucesso em: {caminho_saida}")
 
 except Exception as e:
-    erro_path = r"C:\Users\leosouza\erro_script.txt"
-    with open(erro_path, "w") as f:
+    erro_path = os.path.join(PASTA_SAIDA or ".", "erro_script.txt")
+    with open(erro_path, "w", encoding="utf-8") as f:
         f.write("Erro ao executar script:\n")
         f.write(traceback.format_exc())
     print(f"❌ ERRO AO EXECUTAR. Detalhes salvos em: {erro_path}")

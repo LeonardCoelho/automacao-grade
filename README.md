@@ -1,5 +1,7 @@
 # 🚛 Automação de Geração de Grade de Carregamento
 
+> ⏱️ **Resultado:** eliminou **~10 horas semanais** de trabalho manual. Em produção com execução automática a cada 1 hora.
+
 Automação em Python que gera uma planilha filtrada para uma transportadora específica, com base em um arquivo de ordens de coleta. Mantém toda a **formatação original**, aplica **validações** e **integra com Power Automate** para envio automático por e-mail.
 
 ## 🧠 Objetivo
@@ -23,9 +25,11 @@ automacao-grade/
 ├── data/
 │   └── ORDEM_DE_COLETA.xlsx           # Planilha base
 ├── images/
-│   └── print-planilha-final.jpg       # Exemplo do resultado
+│   └── Print planilha final.jpg       # Exemplo do resultado
 ├── src/
-│   └── atualizar_grade.py         # Script principal
+│   ├── atualizar_grade.py             # Script principal
+│   └── .env.example                   # Modelo de configuração
+├── .gitignore
 ├── README.md
 └── requirements.txt                   # Bibliotecas necessárias
 ```
@@ -35,6 +39,7 @@ automacao-grade/
 - 🐍 Python 3.10+  
 - 📊 openpyxl – manipulação de Excel com formatação  
 - 🖥️ pywin32 – detecção de planilhas abertas  
+- 🔐 python-dotenv – configuração via `.env`  
 - ☁️ Power Automate (OneDrive) – envio automático
 
 ## ✅ Benefícios
@@ -60,7 +65,18 @@ git clone https://github.com/LeonardCoelho/automacao-grade.git
 pip install -r requirements.txt
 ```
 
-3. Coloque sua planilha base em `data/ORDEM_DE_COLETA.xlsx`.
+3. Configure as variáveis: copie `src/.env.example` para `src/.env` e preencha.
+
+| Variável | Descrição |
+|---|---|
+| `CAMINHO_ENTRADA` | Planilha de ordens de coleta (uma aba por dia do mês) |
+| `PASTA_SAIDA` | Pasta onde a grade é salva (monitorada pelo Power Automate) |
+| `TRANSPORTADORA` | Transportadora a filtrar (coluna `TRANSP.`) |
+| `STATUS_INVALIDOS` | Status da coluna `EMAIL OK` a excluir, separados por vírgula |
+| `LINHA_HEADER` | Linha do cabeçalho na planilha |
+| `PREFIXO_SAIDA` | Prefixo do arquivo gerado (`<prefixo>_<dia>.xlsx`) |
+
+> O `.env` fica fora do Git (`.gitignore`): caminhos e nomes reais nunca vão para o repositório.
 
 4. Execute o script manualmente ou agende com o Task Scheduler:  
 ```bash
@@ -75,10 +91,10 @@ A pasta de destino é monitorada pelo **Power Automate** (via OneDrive). Assim q
 ## 🙋‍♂️ Autor
 
 Desenvolvido por **Leonardo Coelho**  
-📫 [linkedin.com/in/leonardocoelho](https://www.linkedin.com/in/leonardocoelho)
+📫 [linkedin.com/in/leoscoelho](https://www.linkedin.com/in/leoscoelho)
 
 ## 🏁 Próximos passos (ideias)
 
 - [x] Deploy com agendamento automático a cada 1h  
-- [ ] Parametrizar transportadora e dias via `.env` ou interface  
+- [x] Parametrizar caminhos, transportadora e cabeçalho via `.env`  
 - [ ] Adicionar logs automáticos
